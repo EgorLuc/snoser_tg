@@ -9,7 +9,7 @@ import base64
 init()
 
 def main():
-    user_id, user, id, request_count, chosen_complaint_type = get_user_input()
+    user_id, user, id, request_count, chosen_complaint_type = get_user_input( )
     proxies = [
      #Ваши proxy  
 ]
@@ -29,18 +29,18 @@ def main():
     input("Нажмите Enter для выхода...")   
 
 def generate_random_phone():
-    return f"+79{''.join(random.choice('0123456789') for _ in range(9))}"
+    return f"+79{ ''.join( random.choice( '0123456789' ) for _ in range ( 9 ) ) }"
 
 def generate_random_email():
-    domains = ["gmail.com", "mail.ru", "rambler.ru", "ya.ru"]
-    name_length = random.randint(5, 10)
+    domains = [ "gmail.com", "mail.ru", "rambler.ru", "ya.ru" ]
+    name_length = random.randint( 5, 10 )
     letters = "abcdefghijklmnopqrstuvwxyz1234567890"
-    email_name = ''.join(random.choice(letters) for _ in range(name_length))
-    return f"{email_name}@{random.choice(domains)}"
+    email_name = ''.join( random.choice( letters ) for _ in range (name_length ) )
+    return f"{ email_name }@{random.choice( domains ) }"
 
-def generate_random_string(length):
+def generate_random_string( length ):
     letters = string.ascii_lowercase
-    return ''.join(random.choice(letters) for i in range(length))
+    return ''.join( random.choice(letters) for i in range( length ) )
     
 def clear_screen():
     os.system('cls' if os.name == 'nt' else 'clear')
@@ -152,20 +152,20 @@ complaint_types = {
         ],
 }       
 
-def get_user_input():
-    clear_screen()
-    user_id = input(Fore.CYAN + "   Введите ID: " + Style.RESET_ALL)
-    user = input(Fore.CYAN + "   Введите @: " + Style.RESET_ALL) 
-    id = input(Fore.CYAN + "   Введите cсылку на нарушение ( или для сноса канала/группы): " + Style.RESET_ALL)
-    request_count = int(input(Fore.CYAN + "   Введите количество отправок: " + Style.RESET_ALL))
+def get_user_input ():
+    clear_screen ()
+    user_id = input( Fore.CYAN + "   Введите ID: " + Style.RESET_ALL )
+    user = input( Fore.CYAN + "   Введите @: " + Style.RESET_ALL ) 
+    id = input( Fore.CYAN + "   Введите cсылку на нарушение ( или для сноса канала/группы): " + Style.RESET_ALL )
+    request_count = int( input( Fore.CYAN + "   Введите количество отправок: " + Style.RESET_ALL ) )
     print(Fore.CYAN + "   Выберите тип жалобы:" + Style.RESET_ALL)
     for i, complaint_type in enumerate(complaint_types.keys()):
         print(f"   {i+1}. {complaint_type}")
-    choice = int(input(Fore.CYAN + "   Выберите номер типа жалобы: " + Style.RESET_ALL)) - 1 
-    chosen_complaint_type = list(complaint_types.keys())[choice]
+    choice = int( input( Fore.CYAN + "   Выберите номер типа жалобы: " + Style.RESET_ALL ) ) - 1 
+    chosen_complaint_type = list( complaint_types.keys() )[choice]
     return user_id, user, id, request_count, chosen_complaint_type 
 
-RETRY_STRATEGY = Retry(
+RETRY_STRATEGY = Retry (
     total=3,
     status_forcelist=[429, 500, 502, 503, 504],
     backoff_factor=1,
@@ -191,23 +191,23 @@ sites = [
     }       
 ]
 
-def send_data_to_server(data, proxies, cause, email, phone):
+def send_data_to_server( data, proxies, cause, email, phone ):
     session = requests.Session()
-    session.mount("https://", HTTPAdapter(max_retries=RETRY_STRATEGY))
+    session.mount( "https://", HTTPAdapter( max_retries=RETRY_STRATEGY ) )
     headers = {
         #юзер-агенты
     }
     try:
-        proxy = random.choice(proxies)
-        response = session.post(data['url'], headers=headers, data=data['data'], proxies=proxy, timeout=10)
+        proxy = random.choice( proxies )
+        response = session.post( data['url'], headers=headers, data=data['data'], proxies=proxy, timeout=10 )
         response.raise_for_status()
         phone_info = f", phone: {phone}" if phone else ""
-        print(f"[{Fore.GREEN}+{Style.RESET_ALL}] Запрос отправлен на {data['url']}  с причиной: {cause}, email: {email}{phone_info} отправлен через прокси {proxy}!")
+        print( f"[{Fore.GREEN}+{Style.RESET_ALL}] Запрос отправлен на {data['url']}  с причиной: {cause}, email: {email}{phone_info} отправлен через прокси {proxy}!" )
     except requests.exceptions.RequestException as e:
-        print(f"[{Fore.RED}-{Style.RESET_ALL}] Ошибка при отправке запроса на {data['url']} через прокси {proxy}: {e}")
+        print( f"[{Fore.RED}-{Style.RESET_ALL}] Ошибка при отправке запроса на {data['url']} через прокси {proxy}: {e}" )
 
-def animate_sending(current, total):
-    print(f"Идет отправка {current} из {total}", end="\r")
+def animate_sending( current, total ):
+    print( f"Идет отправка {current} из {total}", end="\r" )
  
 
 if __name__ == "__main__":
