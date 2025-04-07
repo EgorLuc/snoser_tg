@@ -6,13 +6,27 @@ import string
 import os
 from colorama import Fore, Style, init
 import base64
-init()                                    
-def clear_screen():
-    os.system('cls' if os.name == 'nt' else 'clear')
+init()
 
-def generate_random_string(length):
-    letters = string.ascii_lowercase
-    return ''.join(random.choice(letters) for i in range(length))
+def main():
+    user_id, user, id, request_count, chosen_complaint_type = get_user_input()
+    proxies = [
+     #Ваши proxy  
+]
+
+    for i in range(request_count):
+        random_site = random.choice(sites)
+        if 'tg_feedback_appeal' in random_site['data']:
+            random_site['data']['tg_feedback_appeal'] = random.choice(complaint_types[chosen_complaint_type]).format(user_id=user_id, user=user, id=id) 
+            random_site['data']['tg_feedback_email'] = generate_random_email() 
+            random_site['data']['tg_feedback_phone'] = generate_random_phone()
+        else: 
+            random_site['data']['name'] = user 
+            random_site['data']['email'] = f"{user_id}@example.com" 
+            random_site['data']['message'] = random.choice(complaint_types[chosen_complaint_type]).format(user_id=user_id, user=user, id=id)
+        send_data_to_server(random_site, proxies, random_site['data'].get('tg_feedback_appeal') or random_site['data']['message'], random_site['data'].get('tg_feedback_email') or random_site['data']['email'], random_site['data'].get('tg_feedback_phone', ''))
+        animate_sending(i + 1, request_count)
+    input("Нажмите Enter для выхода...")   
 
 def generate_random_phone():
     return f"+79{''.join(random.choice('0123456789') for _ in range(9))}"
@@ -23,6 +37,13 @@ def generate_random_email():
     letters = "abcdefghijklmnopqrstuvwxyz1234567890"
     email_name = ''.join(random.choice(letters) for _ in range(name_length))
     return f"{email_name}@{random.choice(domains)}"
+
+def generate_random_string(length):
+    letters = string.ascii_lowercase
+    return ''.join(random.choice(letters) for i in range(length))
+    
+def clear_screen():
+    os.system('cls' if os.name == 'nt' else 'clear')
 
 complaint_types = {
     "Спам": [
@@ -129,21 +150,8 @@ complaint_types = {
                 "Hello, my account {user} with ID {user_id} was stolen, when I try to log into it, the one who stole the account does not allow me to log in and disables my session, I ask you to please disable all sessions on this account.",
                 "Здраствуйте,меня взломали и выкинули с аккаунта {user}. Теперь Я не могу зайти на аккаунт так как мгновенно выкидывают меня с аккаунта. Прошу помогите, удалите аккаунт или обнулите сессии, там было очень много важной информации. Вот мой ID: {user_id}"
         ],
-}
+}       
 
-encoded_password = "S2lsbDoyMDI0"
-correct_password = base64.b64decode(encoded_password).decode('utf-8')
-
-
-while True:
-    password_attempt = input("Введите пароль: ")
-    if base64.b64decode(encoded_password).decode() == password_attempt:
-        clear_screen()
-        break
-    else:
-        print(Fore.RED + "Неверный пароль!" + Style.RESET_ALL)
-        
-        
 def get_user_input():
     clear_screen()
     user_id = input(Fore.CYAN + "   Введите ID: " + Style.RESET_ALL)
@@ -200,26 +208,7 @@ def send_data_to_server(data, proxies, cause, email, phone):
 
 def animate_sending(current, total):
     print(f"Идет отправка {current} из {total}", end="\r")
-
-def main():
-    user_id, user, id, request_count, chosen_complaint_type = get_user_input()
-    proxies = [
-     #Ваши proxy  
-]
-
-    for i in range(request_count):
-        random_site = random.choice(sites)
-        if 'tg_feedback_appeal' in random_site['data']:
-            random_site['data']['tg_feedback_appeal'] = random.choice(complaint_types[chosen_complaint_type]).format(user_id=user_id, user=user, id=id) 
-            random_site['data']['tg_feedback_email'] = generate_random_email() 
-            random_site['data']['tg_feedback_phone'] = generate_random_phone()
-        else: 
-            random_site['data']['name'] = user 
-            random_site['data']['email'] = f"{user_id}@example.com" 
-            random_site['data']['message'] = random.choice(complaint_types[chosen_complaint_type]).format(user_id=user_id, user=user, id=id)
-        send_data_to_server(random_site, proxies, random_site['data'].get('tg_feedback_appeal') or random_site['data']['message'], random_site['data'].get('tg_feedback_email') or random_site['data']['email'], random_site['data'].get('tg_feedback_phone', ''))
-        animate_sending(i + 1, request_count)
-    input("Нажмите Enter для выхода...")    
+ 
 
 if __name__ == "__main__":
     main()
