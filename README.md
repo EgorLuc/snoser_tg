@@ -19,3 +19,5 @@ VPN - обобщённое название технологий, позволя
 Установка:
 
 <code>pip install -r requrments.txt</code>
+
+палитру которая это сделала можете увидеть тут https://linktr.ee/egorkapomidorka
